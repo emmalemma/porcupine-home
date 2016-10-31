@@ -10,7 +10,6 @@
   "license": "UNLICENSED",
   "dependencies": {
     "browserify-middleware": "^7.1.0",
-    "bufferutil": "^1.2.1",
     "coffeeify": "^2.0.1",
     "express": "^4.14.0",
     "express-ws": "^2.0.0",
