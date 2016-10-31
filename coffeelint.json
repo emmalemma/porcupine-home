@@ -1,0 +1,13 @@
+{
+  "indentation" : {
+    "level" : "warn",
+    "value" : 1
+  },
+  "no_tabs" : {
+    "level" : "ignore",
+  },
+  "line_endings" : {
+    "value" : "unix",
+    "level" : "error"
+  }
+}
