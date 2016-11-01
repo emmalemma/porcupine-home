@@ -31,12 +31,12 @@ module.exports = render = (state, emit)->
 							'ev-click': new EventHook ->
 								emit eval: {id, code: 'node.restart()'}
 							'Reset'
-						el 'input',
-							'value': state.value
+						el 'textarea',
+							'value': state.eval
 							'ev-keyup': new EventHook (e)->
-								state.value = e.target.value
+								state.eval = e.target.eval
 						el 'button',
 							'ev-click': new EventHook ->
-								emit eval: {id, code: state.value}
+								emit eval: {id, code: state.eval}
 							'Eval'
 						el 'textarea', device.log
