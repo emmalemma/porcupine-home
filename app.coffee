@@ -1,6 +1,7 @@
 express = require('express')
 app = express()
-require('express-ws')(app)
+expressWS = require('express-ws')
+expressWS(app)
 
 browserify = require('browserify-middleware')
 browserify.settings
@@ -32,7 +33,7 @@ app.get '/', (req, res)->
 	res.end()
 
 
-app.ws '/ws', (ws, req)->
+app.ws '/ws', wshandler = (ws, req)->
 	console.log("websocket client connected")
 	ws.on 'message', (msg)->
 		console.log("websocket message: #{msg}")
@@ -89,4 +90,20 @@ handler.update = (ws, data)->
 handler.log = (ws, data)->
 	broadcast log: {id: ws.id, data}
 
-app.listen 9001, -> console.log "listening on 9001."
+if process.env.NODE_ENV is 'pi'
+	https = require('https')
+	fs = require('fs')
+	credentials =
+		cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+		key: fs.readFileSync(process.env.SSL_KEY_PATH)
+	https.createServer(credentials, app)
+	.listen 9002, -> console.log "listening on 9002 [SSL]"
+	pubWS = express()
+	expressWS pubWS
+	pubWS.ws '/ws', wshandler
+	.get '*', (req, res)->
+		res.redirect('https://home.emmalem.ma'+req.url)
+	.listen 9001, -> console.log "listening on 9001 [redirect]"
+else
+	http = require('http')
+	http.createServer(app).listen 9001, -> console.log "listening on 9001 [UNSECURED]"
