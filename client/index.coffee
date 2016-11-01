@@ -7,7 +7,7 @@ handle = {}
 devices = {}
 state = {devices, value: '=node.chipid()'}
 
-ws = new WebSocket("ws://#{location.host}/ws")
+ws = new WebSocket("wss://#{location.host}/ws")
 WebSocket.prototype.json =(o)->@send JSON.stringify o
 ws.onopen =->
 	ws.json client: 'register'
@@ -45,7 +45,7 @@ do initialize = ->
 			el 'meta', charset: 'UTF-8'
 			el 'meta', name:"viewport", content:"width=device-width, user-scalable=no"
 			el 'link', res: 'stylesheet', href: 'http://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
-			el 'link', rel: 'stylesheet', href: '/index.css'
+			el 'link', rel: 'stylesheet', href: '/css/index.css'
 		el 'body'
 
 	document.replaceChild html, document.documentElement

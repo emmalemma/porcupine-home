@@ -17,19 +17,11 @@ clientIdx = 0
 clients = {}
 handler = {}
 
-app.get '/client/index.js', browserify(__dirname + '/client/index.coffee')
-
-stylus = require 'express-stylus'
-nib = require 'nib'
 styleDir = __dirname + '/style'
-app.use stylus
-  src: styleDir
-  use: [nib()]
-  import: ['nib']
-app.use(express.static(styleDir))
+app.use('/css', express.static(styleDir))
 
 app.get '/', (req, res)->
-	res.send("<script src='/client/index.js'></script>")
+	res.send("<script src='/js/index.js'></script>")
 	res.end()
 
 
@@ -98,6 +90,7 @@ if process.env.NODE_ENV is 'pi'
 		key: fs.readFileSync(process.env.SSL_KEY_PATH)
 	https.createServer(credentials, app)
 	.listen 9002, -> console.log "listening on 9002 [SSL]"
+	app.use('/js', express.static(__dirname + '/js'))
 	pubWS = express()
 	expressWS pubWS
 	pubWS.ws '/ws', wshandler
@@ -105,5 +98,14 @@ if process.env.NODE_ENV is 'pi'
 		res.redirect('https://home.emmalem.ma'+req.url)
 	.listen 9001, -> console.log "listening on 9001 [redirect]"
 else
+	stylus = require 'express-stylus'
+	nib = require 'nib'
+	app.use stylus
+	  src: styleDir
+	  use: [nib()]
+	  import: ['nib']
+
+	app.get '/js/index.js', browserify(__dirname + '/client/index.coffee')
+
 	http = require('http')
 	http.createServer(app).listen 9001, -> console.log "listening on 9001 [UNSECURED]"
