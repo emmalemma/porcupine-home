@@ -1,11 +1,12 @@
 el = require('./coffee-hyperscript')
 EventHook = require './event-hook'
 FastClick = require './fast-click'
+_ = require 'lodash'
 
 module.exports = render = (state, emit)->
 	el 'main',
 		el 'quickbar',
-			for id, device of state.devices
+			_.map state.devices, (device, id)->
 				el 'toggle',
 					className: "#{if device.powered then 'on' else 'off'} #{if device.synced then '' else 'dirty'}"
 					'ev-click': new FastClick ->
@@ -13,7 +14,7 @@ module.exports = render = (state, emit)->
 					device.label
 		el 'h1', 'Devices'
 		el 'devices',
-			for id, device of state.devices
+			_.map state.devices, (device, id)->
 				el 'device',
 					el 'address',
 						el 'mac', device.mac
