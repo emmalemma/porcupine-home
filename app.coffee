@@ -1,7 +1,6 @@
 express = require('express')
-app = express()
+
 expressWS = require('express-ws')
-expressWS(app)
 
 browserify = require('browserify-middleware')
 browserify.settings
@@ -9,23 +8,11 @@ browserify.settings
 	extensions: ['.coffee']
 	grep: /\.coffee$/
 
-ws = require('ws')
-ws.prototype.json =(o)->@send JSON.stringify(o)
-
-devices = {}
-clientIdx = 0
-clients = {}
-handler = {}
+app = express()
 
 styleDir = __dirname + '/style'
-app.use('/css', express.static(styleDir))
 
-app.get '/', (req, res)->
-	res.send("<script src='/js/index.js'></script>")
-	res.end()
-
-
-app.ws '/ws', wshandler = (ws, req)->
+wshandler = (ws, req)->
 	console.log("websocket client connected")
 	ws.on 'message', (msg)->
 		console.log("websocket message: #{msg}")
@@ -44,6 +31,53 @@ app.ws '/ws', wshandler = (ws, req)->
 			delete devices[ws.id]
 		if ws.client
 			delete clients[ws.id]
+
+if process.env.NODE_ENV is 'pi'
+	https = require('https')
+	fs = require('fs')
+	credentials =
+		cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+		key: fs.readFileSync(process.env.SSL_KEY_PATH)
+	server = https.createServer(credentials, app)
+	server.listen 9002, -> console.log "listening on 9002 [SSL]"
+	app.use('/js', express.static(__dirname + '/js'))
+	pubWS = express()
+	expressWS pubWS
+	pubWS.ws '/ws', wshandler
+	.get '*', (req, res)->
+		res.redirect('https://home.emmalem.ma'+req.url)
+	.listen 9001, -> console.log "listening on 9001 [redirect]"
+else
+	stylus = require 'express-stylus'
+	nib = require 'nib'
+	app.use stylus
+	  src: styleDir
+	  use: [nib()]
+	  import: ['nib']
+
+	app.get '/js/index.js', browserify(__dirname + '/client/index.coffee')
+
+	http = require('http')
+	server = http.createServer(app).listen 9001, -> console.log "listening on 9001 [UNSECURED]"
+
+expressWS(app, server)
+
+ws = require('ws')
+ws.prototype.json =(o)->@send JSON.stringify(o)
+
+devices = {}
+clientIdx = 0
+clients = {}
+handler = {}
+
+app.use('/css', express.static(styleDir))
+
+app.get '/', (req, res)->
+	res.send("<script src='/js/index.js'></script>")
+	res.end()
+
+
+app.ws '/ws', wshandler
 
 broadcast =(msg)->
 	for idx, client of clients
@@ -81,31 +115,3 @@ handler.update = (ws, data)->
 
 handler.log = (ws, data)->
 	broadcast log: {id: ws.id, data}
-
-if process.env.NODE_ENV is 'pi'
-	https = require('https')
-	fs = require('fs')
-	credentials =
-		cert: fs.readFileSync(process.env.SSL_CERT_PATH)
-		key: fs.readFileSync(process.env.SSL_KEY_PATH)
-	https.createServer(credentials, app)
-	.listen 9002, -> console.log "listening on 9002 [SSL]"
-	app.use('/js', express.static(__dirname + '/js'))
-	pubWS = express()
-	expressWS pubWS
-	pubWS.ws '/ws', wshandler
-	.get '*', (req, res)->
-		res.redirect('https://home.emmalem.ma'+req.url)
-	.listen 9001, -> console.log "listening on 9001 [redirect]"
-else
-	stylus = require 'express-stylus'
-	nib = require 'nib'
-	app.use stylus
-	  src: styleDir
-	  use: [nib()]
-	  import: ['nib']
-
-	app.get '/js/index.js', browserify(__dirname + '/client/index.coffee')
-
-	http = require('http')
-	http.createServer(app).listen 9001, -> console.log "listening on 9001 [UNSECURED]"
