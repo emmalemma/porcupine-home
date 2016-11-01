@@ -5,7 +5,7 @@ render = require('./render')
 update = null
 handle = {}
 devices = {}
-state = {devices}
+state = {devices, value: '=node.chipid()'}
 
 ws = new WebSocket("ws://#{location.host}/ws")
 WebSocket.prototype.json =(o)->@send JSON.stringify o
@@ -18,13 +18,23 @@ ws.onmessage = ({data: msg})->
 	for event, data of o
 		handle[event]? data
 
-emit = ws.json.bind ws
+emit = (msg)->
+	ws.json msg
+	if msg.toggle and (dev = devices[msg.toggle])
+		dev.synced = no
+		dev.powered = not dev.powered
+		update()
 
 handle.devices = (data)->
 	for id, newdata of data
 		dev = devices[id] ?= {}
 		dev[k] = v for k, v of newdata
+		dev[k].synced = true
 	do update
+
+handle.log = ({id, data})->
+	devices[id]?.log += data
+	update()
 
 currentDom = null
 rootElement = null
@@ -33,8 +43,9 @@ do initialize = ->
 	html = VDom.create el 'html',
 		el 'head',
 			el 'meta', charset: 'UTF-8'
+			el 'meta', name:"viewport", content:"width=device-width, user-scalable=no"
 			el 'link', res: 'stylesheet', href: 'http://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
-			el 'link', rel: 'stylesheet', href: 'demo.css'
+			el 'link', rel: 'stylesheet', href: '/index.css'
 		el 'body'
 
 	document.replaceChild html, document.documentElement

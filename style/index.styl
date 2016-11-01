@@ -1,0 +1,48 @@
+*
+  display: block
+
+body
+  font-family: "Open Sans", sans-serif
+  font-style: normal
+
+devices
+  device
+    border: 1px solid gray
+
+    address
+      padding: 5px
+      font-size: 12px
+      font-style: normal
+      text-transform: uppercase
+      color: gray
+      background-color: #EEE
+      border-radius: 2px
+      > *
+        display: inline-block
+        margin-right: 10px
+
+    label, control
+      margin: 5px
+
+quickbar
+  > toggle
+    display: inline-block
+    margin-right: 10px
+
+toggle
+  border: 1px solid gray
+  border-radius: 7px
+  width: 100px
+  height: 67px - 25px
+  text-align: center
+  text-transform: uppercase
+  padding-top: 25px
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  &.on
+    background: white
+    color: black
+  &.off
+    background: black
+    color: white
+    box-shadow: 2px 3px 3px gray

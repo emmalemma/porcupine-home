@@ -1,0 +1,52 @@
+* {
+  display: block;
+}
+body {
+  font-family: "Open Sans", sans-serif;
+  font-style: normal;
+}
+devices device {
+  border: 1px solid #808080;
+}
+devices device address {
+  padding: 5px;
+  font-size: 12px;
+  font-style: normal;
+  text-transform: uppercase;
+  color: #808080;
+  background-color: #eee;
+  border-radius: 2px;
+}
+devices device address > * {
+  display: inline-block;
+  margin-right: 10px;
+}
+devices device label,
+devices device control {
+  margin: 5px;
+}
+quickbar > toggle {
+  display: inline-block;
+  margin-right: 10px;
+}
+toggle {
+  border: 1px solid #808080;
+  border-radius: 7px;
+  width: 100px;
+  height: 42px;
+  text-align: center;
+  text-transform: uppercase;
+  padding-top: 25px;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+toggle.on {
+  background: #fff;
+  color: #000;
+}
+toggle.off {
+  background: #000;
+  color: #fff;
+  -webkit-box-shadow: 2px 3px 3px #808080;
+  box-shadow: 2px 3px 3px #808080;
+}

@@ -1,11 +1,12 @@
-module.exports = class EventHook
+event = if 'ontouchstart' of window
+  'touchstart'
+else
+    'click'
+
+module.exports = class FastClick
   constructor: (@handler)->
   hook: (node, prop, prev)->
-    event = prop.substr 3
     node.addEventListener event, @handler
 
   unhook: (node, prop, next)->
-    event = prop.substr 3
     node.removeEventListener event, @handler
-
-module.exports.StopPropagationHook = new EventHook (e)->e.stopPropagation()
