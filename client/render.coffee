@@ -34,7 +34,7 @@ module.exports = render = (state, emit)->
 						el 'textarea',
 							'value': state.eval
 							'ev-keyup': new EventHook (e)->
-								state.eval = e.target.eval
+								state.eval = e.target.value
 						el 'button',
 							'ev-click': new EventHook ->
 								emit eval: {id, code: state.eval}

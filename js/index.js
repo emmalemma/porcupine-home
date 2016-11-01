@@ -265,17 +265,17 @@ module.exports = render = function(state, emit) {
           }
         });
       })
-    }, 'Reset'), el('input', {
-      'value': state.value,
+    }, 'Reset'), el('textarea', {
+      'value': state["eval"],
       'ev-keyup': new EventHook(function(e) {
-        return state.value = e.target.value;
+        return state["eval"] = e.target.value;
       })
     }), el('button', {
       'ev-click': new EventHook(function() {
         return emit({
           "eval": {
             id: id,
-            code: state.value
+            code: state["eval"]
           }
         });
       })
