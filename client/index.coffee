@@ -44,8 +44,8 @@ do initialize = ->
 		el 'head',
 			el 'meta', charset: 'UTF-8'
 			el 'meta', name:"viewport", content:"width=device-width, user-scalable=no"
-			el 'link', res: 'stylesheet', href: 'http://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
-			el 'link', rel: 'stylesheet', href: '/css/index.css'
+			el 'link', res: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
+			el 'link', rel: 'stylesheet', href: 'https://home.emmalem.ma/css/index.css'
 		el 'body'
 
 	document.replaceChild html, document.documentElement
