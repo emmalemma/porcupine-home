@@ -138,7 +138,7 @@ state = {
   value: '=node.chipid()'
 };
 
-ws = new WebSocket("wss://" + location.host + "/ws");
+ws = new WebSocket("wss://home.emmalem.ma/ws");
 
 WebSocket.prototype.json = function(o) {
   return this.send(JSON.stringify(o));
