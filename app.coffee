@@ -44,6 +44,7 @@ if process.env.NODE_ENV is 'pi'
 	pubWS = express()
 	expressWS pubWS
 	pubWS.ws '/ws', wshandler
+	.use('/.well-known', express.static(__dirname + '/static/.well-known'))
 	.get '*', (req, res)->
 		res.redirect('https://home.emmalem.ma'+req.url)
 	.listen 9001, -> console.log "listening on 9001 [redirect]"

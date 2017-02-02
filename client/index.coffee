@@ -7,7 +7,7 @@ handle = {}
 devices = {}
 state = {devices, value: '=node.chipid()'}
 
-ws = new WebSocket("wss://#{location.host}/ws")
+ws = new WebSocket("wss://home.emmalem.ma/ws")
 WebSocket.prototype.json =(o)->@send JSON.stringify o
 ws.onopen =->
 	ws.json client: 'register'
