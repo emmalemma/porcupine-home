@@ -210,10 +210,10 @@ rootElement = null;
     content: "width=device-width, user-scalable=no"
   }), el('link', {
     res: 'stylesheet',
-    href: 'http://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
+    href: 'https://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
   }), el('link', {
     rel: 'stylesheet',
-    href: '/css/index.css'
+    href: 'https://home.emmalem.ma/css/index.css'
   })), el('body')));
   document.replaceChild(html, document.documentElement);
   return document.body.appendChild(rootElement);
