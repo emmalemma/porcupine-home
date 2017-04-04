@@ -95,12 +95,16 @@ handler.client = (ws, data)->
 handler.toggle = (ws, id)->
 	devices[id]?.ws.json power: 'toggle'
 
+heaterId = humidifierId = null
 handler.device = (ws, data)->
 	ws.id = data.mac
 	ws.device = yes
-	console.log("registering device: ", ws.id)
 	data.log = "[registered]\n"
 	devices[ws.id] = {ws, info: data}
+	if data.label is 'Heater'
+		heaterId = ws.id
+	else if data.label is 'Humidifier'
+		humidifierId = ws.id
 	ws.json registered: true
 
 handler.eval = (ws, {id, code})->
@@ -116,3 +120,14 @@ handler.update = (ws, data)->
 
 handler.log = (ws, data)->
 	broadcast log: {id: ws.id, data}
+
+handler.temp = (ws, data)->
+	if data.temp < 24
+		devices[heaterId]?.json power: 'on'
+	else
+		devices[heaterId]?.json power: 'off'
+
+	if data.humidity < 65
+		devices[humidifierId]?.json power: 'on'
+	else
+		devices[humidifierId]?.json power: 'off'
