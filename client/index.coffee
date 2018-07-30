@@ -7,16 +7,25 @@ handle = {}
 devices = {}
 state = {devices, value: '=node.chipid()'}
 
-ws = new WebSocket("wss://home.emmalem.ma/ws")
-WebSocket.prototype.json =(o)->@send JSON.stringify o
-ws.onopen =->
-	ws.json client: 'register'
+wsdelay = 0
+ws = null
+do resetws =->
+	wsdelay = 30 * 1000
+	ws = new WebSocket("wss://home.emmalem.ma/ws")
+	wsdelay = 0
+	WebSocket.prototype.json =(o)->@send JSON.stringify o
+	ws.onopen =->
+		ws.json client: 'register'
 
-ws.onmessage = ({data: msg})->
-	console.log "Message rec:", msg
-	o = JSON.parse msg
-	for event, data of o
-		handle[event]? data
+	ws.onmessage = ({data: msg})->
+		console.log "Message rec:", msg
+		o = JSON.parse msg
+		for event, data of o
+			handle[event]? data
+
+	ws.onclose =->
+		setTimeout resetws, wsdelay
+
 
 emit = (msg)->
 	ws.json msg
@@ -45,7 +54,7 @@ do initialize = ->
 			el 'meta', charset: 'UTF-8'
 			el 'meta', name:"viewport", content:"width=device-width, user-scalable=no"
 			el 'link', res: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Play|Comfortaa|Poiret+One'
-			el 'link', rel: 'stylesheet', href: 'https://home.emmalem.ma/css/index.css'
+			el 'link', rel: 'stylesheet', href: '/css/index.css'
 		el 'body'
 
 	document.replaceChild html, document.documentElement

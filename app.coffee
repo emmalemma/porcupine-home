@@ -32,7 +32,10 @@ wshandler = (ws, req)->
 		if ws.client
 			delete clients[ws.id]
 
-if process.env.NODE_ENV is 'pi'
+process.env.SSL_CERT_PATH or= '/Users/bonobo/porcupine@home/certbot/live/home.emmalem.ma/fullchain.pem'
+process.env.SSL_KEY_PATH or= '/Users/bonobo/porcupine@home/certbot/live/home.emmalem.ma/privkey.pem'
+
+if process.env.SSL_CERT_PATH
 	https = require('https')
 	fs = require('fs')
 	credentials =
@@ -112,6 +115,7 @@ handler.eval = (ws, {id, code})->
 
 handler.update = (ws, data)->
 	dev = devices[ws.id]
+	return unless dev
 	dev.info[k] = v for k, v of data
 	ws.json updated: true
 	newdata = {}
@@ -122,12 +126,13 @@ handler.log = (ws, data)->
 	broadcast log: {id: ws.id, data}
 
 handler.temp = (ws, data)->
+	console.log('received temp data:', data)
 	if data.temp < 24
-		devices[heaterId]?.json power: 'on'
+		devices[heaterId]?.ws.json power: 'on'
 	else
-		devices[heaterId]?.json power: 'off'
+		devices[heaterId]?.ws.json power: 'off'
 
 	if data.humidity < 65
-		devices[humidifierId]?.json power: 'on'
+		devices[humidifierId]?.ws.json power: 'on'
 	else
-		devices[humidifierId]?.json power: 'off'
+		devices[humidifierId]?.ws.json power: 'off'
